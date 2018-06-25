@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>Linux下的Socket编程 | YeeChain 的书屋</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="岂能因声音微小而不去呐喊">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Linux下的Socket编程 | YeeChain 的书屋">
+    <meta name="twitter:description" content="岂能因声音微小而不去呐喊">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Linux下的Socket编程 | YeeChain 的书屋">
+    <meta property="og:description" content="岂能因声音微小而不去呐喊">
+
+    
+    <meta name="author" content="YeeChain">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="http://oltqq2ipt.bkt.clouddn.com/blogheadset.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+    <link rel="alternate" type="application/rss+xml" title="YeeChain 的书屋" href="/atom.xml">
+    
+
+    <link rel="canonical" href="http://yeechain.cc/2016/05/04/Linux下的Socket编程/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(http://oltqq2ipt.bkt.clouddn.com/blogwallPaper.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 YeeChain 的书屋 的主页"><img src="http://oltqq2ipt.bkt.clouddn.com/blogavatar.png" width="80" alt="YeeChain 的书屋 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for YeeChain 的书屋">YeeChain 的书屋</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">靖川 一个iOS程序员</span>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">岂能因声音微小而不去呐喊</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+              <li class="navigation__item"><a href="/aboutme">关于我</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/OsCinux" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+  <li class="navigation__item">
+    <a href="/atom.xml" title="RSS" target="_blank">
+      <i class='social fa fa-rss'></i>
+      <span class="label">RSS</span>
+    </a>
+  </li>
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2016-05-04T13:23:26.000Z" class="post-list__meta--date date">2016-05-04</time> &#8226; <span class="post-meta__tags tags">于&nbsp; </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">Linux下的Socket编程</h1>
+  </header>
+
+  <section class="post">
+    <h4 id="Linux下的Socket编程-主要包括TCP部分"><a href="#Linux下的Socket编程-主要包括TCP部分" class="headerlink" title="Linux下的Socket编程(主要包括TCP部分)"></a>Linux下的Socket编程(主要包括TCP部分)</h4><p>本文是Linux下基本的Socket编程进行介绍，主要包括以下知识点 </p>
+<ul>
+<li>Linux下的一些小知识(编译常识，文件相关操作基础，进程与线程)</li>
+<li>TCP网络编程基础(TCP Socket) </li>
+<li>基于UDP协议的接受和发送(UDP Socket),以及网络中的大端存储，小端存储将在后一篇文章介绍</li>
+</ul>
+<h3 id="1-Linux下一些小知识"><a href="#1-Linux下一些小知识" class="headerlink" title="1.Linux下一些小知识"></a>1.Linux下一些小知识</h3><blockquote>
+<p>这些基础摘自《Linux网络编程(第二版)》，仅是对个人的一些Linux常识补充，读者可选择性忽略，直接进入网络编程环节。 </p>
+</blockquote>
+<p><strong><em>(1).程序编译常识</em></strong>在Linux中，程序采用的是最广泛的是GCC编译，程序从源代码文件到指定的可执行文件从要经历一系列过程，本段将对这段过程做个概述。先看一张图：<img src="http://upload-images.jianshu.io/upload_images/183487-f594aaf5a401ec69.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="编译顺序图.png"><br>由于本文所涉及到的socket编程都是C语言下的Socket编程，故最开始的代码源文件都是.c文件。源文件，目标文件和可执行文件是编译过程中常用到的名词。<br><strong>源文件</strong>通常是指存放可编辑代码的文件。<strong>目标文件</strong>是指经过编译器的编译生成的CPU可识别的二进制代码，但是目标文件不能用与执行，因为其中的一些函数过程没有相关的指示和说明。<strong>可执行文件</strong>就是目标文件与相关链接库链接后的文件，是可以执行的。<br>   <strong>预编译过程：</strong>预编译过程采用的是” gcc -E 文件名.c”命令的形式将源文件进行预编译，该过程的目的是将程序中引用的头文件包含进源代码中，并对一些宏进行替换，生成后缀名为.i的中间文件。<br>  <strong>编译过程：</strong>编译过程将用户可识别的语言翻译成一组处理器可识别的操作码，通常翻译成汇编语言。汇编语言通常和机器操作码是一对一的关系,编译过程生成汇编语言的GGC 选项是-S，生成后缀名为.s的汇编文件。<br>  <strong>汇编过程：</strong>汇编过程当然就好理解了，就是讲汇编文件使用GCC选项-C进行汇编，将汇编文件翻译成机器可以识别的机器操作码，也就是后缀名是.obj或者.o目标文件。<br>   <strong>链接过程：</strong>所有目标文件必须通过某种方式组合起来才能运行，目标文件中仅解析了文件内部的变量和函数，对于引用的函数和变量还没有解析，这就需要将其他已经编写好的文件引用进来，对没有解析的变量和函数进行解析，通常引用的目标是库，链接完成之后生成文件名为a.out的可执行文件。<br>  <strong>上述小结：</strong>上述过程仅仅是对在Linux下使用GCC编译器编译的各个过程分开详细描述，对于单个.C的源文件，直接使用gcc命令加上要变异的C语言源文件，GCC会自动生成文件名为a.out的可执行文件，自动的过程包括了头文件扩展，目标文件编译，以及链接默认的系统库一些列操作，最后生成系统默认的可执行程序a.out。如：gcc hello.c，就会直接编译成可执行文件。<br> <strong><em>(2).链接库与加载库</em></strong><br>  <strong>静态链接库：</strong>静态库是obj文件的集合，通常静态库以“.a”为后缀，静态库由程序ar生成。静态库的一个优点或者说作用就是可以在不用重新编译程序库代码的情况下进行程序重新链接，这种方法大大节省了编译过程的时间。但是由于现在计算机系统的日益强大，编译的时间已经不是问题；静态库的另一个优势便是可以提供库文件给使用人员，而不用公开源代码。<br>  <strong>动态链接库：</strong>动态链接库是程序运行时加载的库，当动态链接库正确安装之后，所有程序都可以使用动态库来运行程序，动态链接库是目标文件的集合，但目标文件在动态链接库中的组织方式是按照特殊的方式形成的。<br>  <strong>静态加载库：</strong>动态加载库和一般的动态链接所不同的是，一般动态链接库在程序启动的时候就要寻找动态库，找到库函数；而动态加载库可以用程序的方法来控制什么时候加载。动态加载库主要有函dlopen(),dlerror(),dlsym()和dlclose()，具体使用方式，本文不做过多介绍，网上资源丰富，请读者自行百度。<br><strong><em>(3).Linux下文件相关基础</em></strong><br>   <strong>Linux下文件的内涵：</strong>文件系统狭义的概念是一种对存储设备上的数据进行组织和控制的机制，在Linux下(当然包括UNIX)，文件的含义比较广泛，文件的概念不仅仅包括通常意义的保存在磁盘上的各种各样的数据，还包括各种各样的数据，如鼠标，键盘，网卡，标准输入输出等。“一切皆文件”<br>  <strong>文件描述符：</strong>在Linux下用文件描述符来表示设备文件和普通文件。文件描述符是一个整型的数据，所有对文件的操作都通过文件描述符实现。文件描述符的范围是0～OPEN_MAX。文件描述符是文件系统中连接用户空间和内核空间的枢纽，当打开一个或者创建一个文件时，内核空间创建相应的结构，并生成一个整形变量传递给用户空间的对应进程，进程用这个文件描述符来对文件操作<br>在Linux系统中有3个已经分配的文件描述符，即标准输入、标准输出和标准错误，它们文件描述符的值分别为0、1和2。<br>                 m0[[[<strong>文件相关操作：</strong><br>open() , create(), close(), read(), write(), lseek(), 这里就不详细介绍每个函数的用法了，读者请自行百度。知道的请忽略该内容，这部分内容有助于理解后面的TCP Socket内容。 </p>
+<h3 id="2-TCP网络编程基础-TCP-Socket"><a href="#2-TCP网络编程基础-TCP-Socket" class="headerlink" title="2.TCP网络编程基础(TCP Socket)"></a>2.TCP网络编程基础(TCP Socket)</h3><p><strong><em>(1).套接字相关基础知识</em></strong><br><strong>套接字地址结构：</strong>套接字编程需要指定套接字地址作为参数(套接字不是套接字地址，不要搞混，后面会有介绍)，不同的<strong>协议族</strong>有不同的地址结构，这些地址结构通常以sockaddr_作为开头，并且每一个协议族有一个唯一的后缀，例如对于以太网，其结构名称就是sockaddr_in。 </p>
+<ul>
+<li>通用套接字数据结构： </li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sockaddr</span> </span></span><br><span class="line"><span class="class">&#123;</span>	<span class="comment">/*套接字地址结构*/</span>  </span><br><span class="line">    <span class="keyword">sa_family_t</span> sa_family;	<span class="comment">/*协议族*/</span> </span><br><span class="line">    <span class="keyword">char</span> sa_data[<span class="number">14</span>];	<span class="comment">/*协议族数据*/</span> &#125; </span><br><span class="line">    <span class="comment">// 实际使用的套接字结构：(比如在以太网中)  </span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> &#123;</span> \\以太网套接字地址结构 </span><br><span class="line">    u8 sin_len <span class="comment">/*结构struct socket_in 的长度,16*/</span> </span><br><span class="line">    u8 sin_family <span class="comment">/*通常为AF_INT 协议族*/</span> </span><br><span class="line">    u16  sin_port <span class="comment">/*16为的端口号，网络字节序*/</span> </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> <span class="title">sin_addr</span> /*<span class="title">IP</span>地址32位*/</span></span><br><span class="line"><span class="class">    <span class="title">char</span> <span class="title">sin_zero</span>[8] /*未用*/ &#125;;</span> </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">in_addr</span> &#123;</span> u32 s_addr <span class="comment">/* 32位IP地址，为网络字节序*/</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>结构sockaddr 和结构 sockaddr_in的关系 </li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/183487-84db92a65e4eb51e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="两种结构关系图.png"></p>
+<p>由于以上两种结构的大小是完全一致的，所以在进行地址结构设置时，通常的方法是利用结构struct sockaddr_in进行设置，然后强制转化为struct sockaddr类型，因为两个结构大小完全一致，所以这样的转换不会有副作用。</p>
+<p><strong>(2)TCP网络编程流程</strong>   </p>
+<p>总的来说，TCP网络编程有两端，服务端创建一个服务程序，等待客户端用户连接，接收到用户的连接请求之后，根据用户的请求进行处理；客户端则根据目的服务器的地址和端口进行连接，向服务端发送请求，并对服务器的响应进行数据处理。先总体看看两者是如何交互的：<br><img src="http://upload-images.jianshu.io/upload_images/183487-d4f0f2c82692b561.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="TCP C&amp;S交互过程.png"><br>由图可以看到对于<strong>服务器</strong>来说流程主要分为套接字初始化 socket()，套接字与端口的绑定 bind()，设置服务器的侦听连接 listen()，接受客户端连接 accept() ，接收和发送数据 read()、write() 并进行数据处理及处理完毕的套接字关闭 close()，而对于<strong>客户端</strong>来说分为套接字初始化socket() ，连接服务器 connect()，读写网络数据 read()、write() 并进行数据处理和最后的套接字关闭 close() 过程。所以两者的<strong>区别</strong>在与<strong>客户端在创建了套接字之后不进行地址绑定(不要着急，后面会介绍地址绑定)，而是直接连接服务器端。</strong>下面详细介绍各个函数：<br><strong>(3).TCP网络编程流程函数详解</strong></p>
+<ul>
+<li>socket() 函数原型如下：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">socket</span><span class="params">(<span class="keyword">int</span> domain, <span class="keyword">int</span> type, <span class="keyword">int</span> protocol)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>socket()函数建立一个协议族为domain、协议类型为type、协议编号为protocol的套接字文件描述符。如果函数调用成功，会返回一个表示这个套接字的文件描述符，失败的时候返回–1。  <br>参数domain用于设置网络通信的域，函数socket()根据这个参数选择通信的协议族，通信的协议族在文件sys/socket.h定义，包含下表所示的值，以太网应该设置PF_INET这个域，在程序设计的过程中会发现有的代码使用了AF_INET这个值，在头文件中AF_INET和PF_INET的值是一致的。<br><img src="http://upload-images.jianshu.io/upload_images/183487-15d47670899ce969.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="domain的值及其含义.png">  <br>参数type用于设置套接字通信的类型，主要有SOCK_STREAM(流式套接字)，SOCK_DGRAM(数据包套接字)。其余类型如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/183487-fba81c1ded60fba7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="type的值及其含义.png">函数socket()并不总是执行成功，有可能会出现错误，错误的原因有很多种，可以通过errno获得。在TCP中可以通过socket(AF_INET,SOCK_STREAM,0)返回一个TCP的套接字文件操作符。</p>
+<ul>
+<li>bind() 函数原型如下：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bind</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">const</span> struct sockaddr *my_addr,  </span></span></span><br><span class="line"><span class="function"><span class="params"><span class="keyword">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>bind()函数有三个参数，第一个参数sockfd是用socket()函数创建的文件操作符，第二个参数my_addr是指向一个struct sockaddr参数的指针，sockaddr中包含了地址，端口，以及IP地址的信息，在进行地址绑定的时候，需要先将地址结构中的IP地址，端口，类型等结构struct sockaddr中的域进行设置之后才能绑定，这样进行绑定之后才能将套接字文件描述符与地址等结合在一起。第三个参数addrlen是my_addr结构的长度，可以设置为<code>sizeof(struct sockaddr)</code>最后，bind()函数返回值为0表示绑定成功，返回-1表示失败，同样失败时可以通过查看errno来查看原因。 </p>
+<ul>
+<li>listen()函数原型：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> &lt;sys/socket.h</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">listen</span><span class="params">(<span class="keyword">int</span> sockfd, <span class="keyword">int</span> backlog)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>函数中的sockfd表示当前监听的套接字的文件描述符，很容易理解。backlog表示在accept()函数处理之前在等待队列中的客户端的长度，如果超过这个长度，客户端就会返回一个ECONNREFUSED错误。成功运行时，返回值为0，当运行失败时，返回值为-1，并且设置erno值。注：<strong>listen函数仅仅对类型为SOCK_STREAM或者SOCK_SEQPACKET的协议有效</strong></p>
+<ul>
+<li>accept()函数原型：</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">accept</span><span class="params">(<span class="keyword">int</span> sockfd, struct sockaddr *addr, <span class="keyword">socklen_t</span> *addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>当一个客户端的连接请求到大服务器主机监听的端口时，此时客户端的连接会在队列中等待，直到服务器处理用户请求。函数accept()成功执行之后，会返回一个<code>新的套接字描述符</code>来表示客户端的连接，客户端连接的信息可以通过这个新的描述符来获得，因此当服务器成功处理客户端的请求连接后，会有两个文件描述符，老的文件描述符表示当前服务端正在监听的那个socket，新产生的描述符表示客户端的连接，使用这个新的描述符就可以执行下面要提到的文件传输等工作了。  <br>参数介绍：当accept函数成功执行之后，客户端的信息就可以通过上面的<code>addr</code>来获得了，其中包括了客户端的IP,端口，协议族等内容。第三个参数表示的是第二个参数的长度，同理，也可以使用<code>sizeof(struct sockaddr_in)</code>获得。注意：在accept中，addrlen参数是一个指针而不是一个结构体。函数返回值表示其成功与否，同理，-1表示失败，errno依然可以获得其失败的原因。- 对客户端来说的 connect() 函数  客户端在建立套接字之后，不需要进行地址绑定就可以直接连接服务器，连接服务器的函数就是 connect()，此函数需要指定参数服务器，例如IP地址，端口等。函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/socket.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">connect</span><span class="params">(<span class="keyword">int</span> sockfd, struct sockaddr *serv_addr, <span class="keyword">int</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>在客户端，这里的<code>sockfd</code>便指的是客户端建立套接字返回的文件描述符，第二个参数是一个指向<code>struct sockaddr</code>这种结构体的一个指针，里面包含了客户端需要连接服务器的目的端口，IP地址，以及协议类型等信息，第三个参数表示了第二个参数内容的大小也可以使用<code>sizeof(struct sockaddr)</code>获得。函数返回值表示其成功与否，同理，-1表示失败，errno依然可以获得其失败的原因。</p>
+<ul>
+<li>写入数据函数write()<br>当服务端在收到一个客户端连接之后，可以通过套接字描述符进行数据写入工作，对套接字进行写入的形式和过程与普通文件的操作方式一致，内核会根据文件描述符的值来查找所对应的属性，当写入对象为套接字的时候，会调用对应的内核函数。函数返回的大小为成功写入的字节数，写入函数较为简单，这里不做更多介绍。
+   </li>
+<li>读取数据函数read()</li>
+</ul>
+<p>与写入数据类似，使用read函数可以从套接字描述符中读取数据，当然，在读取数据之前，必须建立套接字连接，具体函数不做过多介绍。</p>
+<blockquote>
+<p>总结，本文仅仅介绍了本人在学习过程中的一些小知识以及TCP套接字建立简单的流程和其简单的用法，相信读者在阅读之后对TCP Socket的整个过程会有了一个比较好的把握(大神自动忽略哈，嘻嘻)。涉及到TCP相关的其他异常控制，本文还没对其进行讨论</p>
+</blockquote>
+
+  </section>
+
+</article>
+
+<section class="read-more">
+           
+    
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">最近的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2016/05/13/内存管理-MRC-ARC/" title="内存管理-MRC-ARC">内存管理-MRC-ARC</a></h2>
+                <p class="excerpt">
+                
+                
+貌似每个iOS开发者都有一篇属于自己的内存管理，记录了自己对内存管理理解的深度以及广度，所以我也来记录一下我的理解。
+
+MRC1.与引用计数相关的alloc/copy/mutableCopy/retain/realease/deallloc
+相关操作
+
+
+
+
+对象操作
+Objective-C方法
+
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2016-05-13T12:06:18.000Z" class="post-list__meta--date date">2016-05-13</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/iOS/">iOS</a>
+</span><a class="btn-border-small" href="/2016/05/13/内存管理-MRC-ARC/">继续阅读</a></div>
+                           
+            </div>
+        
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">更早的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2016/04/01/UIScrollow如何进行屏幕适配/" title="UIScrollView如何进行屏幕适配">UIScrollView如何进行屏幕适配</a></h2>
+                <p class="excerpt">
+                
+                前序
+本文仅是作者参考网上一些文章后自己做的一些总结，没有讨论约束的详细方式，因为使用Xcode图形界面以及第三方的Masonry都可以，理论叙述得不是很多，更多的是一种使用方式，仅供参考，如有指教，欢迎提出
+
+重要概念
+在对UIScrollView进行屏幕适配的时候，其ContentSize是通过
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2016-04-01T13:25:06.000Z" class="post-list__meta--date date">2016-04-01</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;</span><a class="btn-border-small" href="/2016/04/01/UIScrollow如何进行屏幕适配/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+  
+
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2018 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-78918255-1', 'auto');
+	ga('send', 'pageview');
+</script>
+
+    
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?9cdad07c755fa23f6aced510c6760e87";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    
+    <title>内存管理-MRC-ARC | YeeChain 的书屋</title>
+    <meta name="renderer" content="webkit">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta name="description" content="岂能因声音微小而不去呐喊">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="内存管理-MRC-ARC | YeeChain 的书屋">
+    <meta name="twitter:description" content="岂能因声音微小而不去呐喊">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="内存管理-MRC-ARC | YeeChain 的书屋">
+    <meta property="og:description" content="岂能因声音微小而不去呐喊">
+
+    
+    <meta name="author" content="YeeChain">
+    
+    <link rel="stylesheet" href="/css/vno.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+
+    
+    <link rel="icon" href="http://oltqq2ipt.bkt.clouddn.com/blogheadset.png">
+    
+
+    <meta name="generator" content="hexo"/>
+    
+    <link rel="alternate" type="application/rss+xml" title="YeeChain 的书屋" href="/atom.xml">
+    
+
+    <link rel="canonical" href="http://yeechain.cc/2016/05/13/内存管理-MRC-ARC/"/>
+
+                 
+</head>
+
+<body class="home-template no-js">
+    <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <span class="mobile btn-mobile-menu">
+        <i class="fa fa-list btn-mobile-menu__icon"></i>
+        <i class="fa fa-angle-up btn-mobile-close__icon hidden"></i>
+    </span>
+
+    
+<header class="panel-cover panel-cover--collapsed" style="background-image: url(http://oltqq2ipt.bkt.clouddn.com/blogwallPaper.jpg)">
+  <div class="panel-main">
+    <div class="panel-main__inner panel-inverted">
+    <div class="panel-main__content">
+
+        <a href="/" title="前往 YeeChain 的书屋 的主页"><img src="http://oltqq2ipt.bkt.clouddn.com/blogavatar.png" width="80" alt="YeeChain 的书屋 logo" class="panel-cover__logo logo" /></a>
+        <h1 class="panel-cover__title panel-title"><a href="/" title="link to homepage for YeeChain 的书屋">YeeChain 的书屋</a></h1>
+        
+        <span class="panel-cover__subtitle panel-subtitle">靖川 一个iOS程序员</span>
+        
+        <hr class="panel-cover__divider" />
+        <p class="panel-cover__description">岂能因声音微小而不去呐喊</p>
+        <hr class="panel-cover__divider panel-cover__divider--secondary" />
+
+        <div class="navigation-wrapper">
+          <div>
+          <nav class="cover-navigation cover-navigation--primary">
+            <ul class="navigation">
+              <li class="navigation__item"><a href="/#blog" title="访问博客" class="blog-button">博客</a></li>
+            
+              <li class="navigation__item"><a href="/aboutme">关于我</a></li>
+            
+            </ul>
+          </nav>
+          </div>
+          <div>
+          <nav class="cover-navigation navigation--social">
+  <ul class="navigation">
+
+  <!-- Weibo-->
+  
+
+  <!-- Github -->
+  
+  <li class="navigation__item">
+    <a href="https://github.com/OsCinux" title="查看我的GitHub主页" target="_blank">
+      <i class='social fa fa-github'></i>
+      <span class="label">Github</span>
+    </a>
+  </li>
+
+
+<!-- Stack Overflow -->
+        
+
+  <!-- Google Plus -->
+  
+
+<!-- Facebook -->
+
+  
+<!-- Twitter -->
+
+  
+
+  <li class="navigation__item">
+    <a href="/atom.xml" title="RSS" target="_blank">
+      <i class='social fa fa-rss'></i>
+      <span class="label">RSS</span>
+    </a>
+  </li>
+
+
+
+  </ul>
+</nav>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="panel-cover--overlay cover-purple"></div>
+  </div> 
+</header>
+
+    <div class="content-wrapper">
+        <div class="content-wrapper__inner">
+            <article class="post-container post-container--single">
+
+  <header class="post-header">
+    <div class="post-meta">
+      <time datetime="2016-05-13T12:06:18.000Z" class="post-list__meta--date date">2016-05-13</time> &#8226; <span class="post-meta__tags tags">于&nbsp;
+  <a class="tag-link" href="/tags/iOS/">iOS</a>
+ </span>
+      <span class="page-pv">
+      &nbsp;阅读&nbsp;<span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span>
+      </span> 
+   
+    </div>
+    <h1 class="post-title">内存管理-MRC-ARC</h1>
+  </header>
+
+  <section class="post">
+    <blockquote>
+<p>貌似每个iOS开发者都有一篇属于自己的内存管理，记录了自己对内存管理理解的深度以及广度，所以我也来记录一下我的理解。</p>
+</blockquote>
+<h3 id="MRC"><a href="#MRC" class="headerlink" title="MRC"></a>MRC</h3><h4 id="1-与引用计数相关的alloc-copy-mutableCopy-retain-realease-deallloc"><a href="#1-与引用计数相关的alloc-copy-mutableCopy-retain-realease-deallloc" class="headerlink" title="1.与引用计数相关的alloc/copy/mutableCopy/retain/realease/deallloc"></a>1.与引用计数相关的alloc/copy/mutableCopy/retain/realease/deallloc</h4><ul>
+<li>相关操作</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">对象操作</th>
+<th style="text-align:center">Objective-C方法</th>
+<th style="text-align:center">引用计数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">生成并持有对象</td>
+<td style="text-align:center">alloc/new/copy/mutablecopy</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">持有对象</td>
+<td style="text-align:center">retain方法</td>
+<td style="text-align:center">+1</td>
+</tr>
+<tr>
+<td style="text-align:center">释放对象</td>
+<td style="text-align:center">release</td>
+<td style="text-align:center">-1</td>
+</tr>
+<tr>
+<td style="text-align:center">废弃对象</td>
+<td style="text-align:center">dealloc</td>
+<td style="text-align:center">0</td>
+</tr>
+</tbody>
+</table>
+<p>原则</p>
+<ul>
+<li><strong>自己生成的对象，自己持有</strong></li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span> object = [[<span class="built_in">NSObject</span> alloc] init]; </span><br><span class="line"><span class="comment">//以上代码通过alloc生成了一个对象，并且object持有该对象，rc = 1</span></span><br></pre></td></tr></table></figure>
+<p>另外，使用new方法也能生成并持有对象，[NSObject new]和[[NSObject alloc] init]使用效果是完全一致的。</p>
+<ul>
+<li><strong>不是自己生成的对象，自己也能持有</strong><br>通过使用表格第一行生成的对象，自己都能持有，对于alloc/new/copy/mutablecopy 以外的方法生成的对象，自己就不是持有者了，例如<code>id obj = [NSMutableArray array];</code>,obj就不持有array返回的对象，仅仅取得对象的引用，但可以通过<code>[obj retain]</code>让obj持有该对象。</li>
+<li><strong>谁持有，谁释放</strong>，<strong>不持有，不能释放</strong>，<strong>不再需要时，主动释放</strong><br>以上两句话很好理解，谁通过表格第一行的方式生成并持有对象，或者通过retain的方式持有了对象，一旦不需要该对象了，一定要记得调用<code>release</code>方法释放该对象。但只有自己不持有该对象，就一定不能调用<code>release</code>。</li>
+</ul>
+<h4 id="2-MRC中的autorelease"><a href="#2-MRC中的autorelease" class="headerlink" title="2. MRC中的autorelease"></a>2. MRC中的autorelease</h4><p>autorelease故名思议就是自动释放，看上去很像ARC，但其实更类似于C语言中的局部变量，也就是说，超出变量作用域的时候将自动被废弃，但这里与C语言不同的是，编程人员可以手动设置其作用域。<br><em>autorelease的具体使用方法如下：</em><br>(1).生成并持有NSAutoreleasePool对象<br>(2).调用已分配的autorelease方法<br>(3).废弃NSAutoreleasePool对象<br>  NSAutoreleasePool对象的生命周期相当于C语言变量的作用域，对于所有调用过autorelease方法的对象，在废弃NSAutoreleasePool对象时，都将对对象统一调用release方法，代码如下所示：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSAutoreleasePool</span> *pool = [[<span class="built_in">NSAutoreleasePool</span> alloc]init] ;</span><br><span class="line"><span class="keyword">id</span> obj = [ [<span class="built_in">NSObject</span> alloc]init];</span><br><span class="line">[obj autorelease] ;</span><br><span class="line">[pool drain];</span><br></pre></td></tr></table></figure>
+<p>另外在Cocoa框架中，如果不是使用alloc/new/copy/mutablecopy这几个方法返回的对象，其余方法返回的对象都将自动注册到NSAutoreleasePool中</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span> array = [<span class="built_in">NSMutableArray</span> arrayWithCapacity:<span class="number">10</span>];</span><br></pre></td></tr></table></figure>
+<p>其实也就等同于：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span> array = [[[<span class="built_in">NSMutableArray</span> alloc] initWithCapacity:<span class="number">1</span>] autorelease];</span><br></pre></td></tr></table></figure>
+<h4 id="3-实现-以上操作对应于runtime下的实现"><a href="#3-实现-以上操作对应于runtime下的实现" class="headerlink" title="3.实现(以上操作对应于runtime下的实现)"></a>3.实现(以上操作对应于runtime下的实现)</h4><ul>
+<li>retainCount/retain/release的实现：</li>
+</ul>
+<blockquote>
+<p>该理论总结自《Pro multithreading and memory management for iOS and OS X》</p>
+</blockquote>
+<p>由于Apple对于NSObject类的源代码没有公开，此处是利用Xcode的调试器(lldb)和iOS大概追述其实现过程，在NSObject类的alloc类方法上设置断点，追踪程序的执行，所以大概得到的结论便是Apple采用散列表(引用计数表)，来管理引用计数,通过传入对象的地址便可以返回对象的引用计数。</p>
+<ul>
+<li>autorelease的实现  </li>
+</ul>
+<p>通过查看GNUstep的源代码可以知道，当对象调用autorelease方法的时候，实际上的本质就是调用NSAutoreleasePool的addObject()方法。(所以pool当然是一个数组类型的结构喽)</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> -(<span class="keyword">id</span>)autorelease&#123;</span><br><span class="line">      [<span class="built_in">NSAutoreleasePool</span> addObject:<span class="keyword">self</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而当pool调用drain方法的时候则是让pool中的每个对象都调用release方法。</p>
+<h3 id="ARC"><a href="#ARC" class="headerlink" title="ARC"></a>ARC</h3><h4 id="1-ARC中的变量所有权修饰符-strong-weak-unself-unretained-autoreleasing"><a href="#1-ARC中的变量所有权修饰符-strong-weak-unself-unretained-autoreleasing" class="headerlink" title="1.ARC中的变量所有权修饰符 strong, weak,  unself_unretained, autoreleasing,"></a>1.ARC中的变量所有权修饰符<strong> strong,</strong> weak, <strong> unself_unretained,</strong> autoreleasing,</h4><blockquote>
+<p>ARC有效时，id类型和对象类型同C语言的其他类型不同，其类型上必须加上所有权修饰符，不加时默认为__strong.</p>
+</blockquote>
+<ul>
+<li><strong>strong   
+</strong>strong修饰符是id类型和对象类型的默认所有权修饰符，也就是说，以下代码中默认是添加了修饰符的，并且是__strong：</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="keyword">id</span> obj =  [[<span class="built_in">NSObject</span> alloc]init];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//实际上是：</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">id</span> __<span class="keyword">strong</span> obj = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//如果这段代码在非ARC情况下，是这样的：</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">id</span> obj = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line">    [obj release]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是说：<strong>作用1：赋有_ _strong 修饰符的变量在obj超出其作用域的时候，强引用自动失效，引用计数自然归0，释放其被赋予的对象(可以理解为强引用加1，对象的引用计数就加1)</strong></p>
+<p>还有一点，以上是将使用alloc产生的对象，在前面已经提到，这种情况下，obj是会自动持有对象的，其实，在使用alloc/new/copy/mutablecopy以外的方式生成对象的时候，如果添加描述符_ _strong ,此时obj自己就会持有对象了，与之前不同：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"><span class="keyword">id</span> _ _<span class="keyword">strong</span> obj = [<span class="built_in">NSMutableArray</span> array];</span><br><span class="line"><span class="comment">//因为_ _strong为强引用，此时obj会自动持有对象</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//obj超出作用域，强引用失效，自动释放持有对象</span></span><br></pre></td></tr></table></figure>
+<p>另外，<strong>作用2：<strong>strong修饰符通后面要讲的</strong>weak修饰符，__ autoreleasing修饰符一起，可以保证附有这些修饰符的自动变量在初始化的时候为nil</strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span>   _ _<span class="keyword">strong</span>   obj0;</span><br><span class="line"><span class="keyword">id</span>   _ <span class="keyword">weak</span>   obj1;</span><br><span class="line"><span class="keyword">id</span>  _ autorelease    obj2;</span><br><span class="line"></span><br><span class="line"><span class="comment">//其实也就是：</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">id</span>   _ _<span class="keyword">strong</span>   obj0 = <span class="literal">nil</span>;</span><br><span class="line"><span class="keyword">id</span>   _ <span class="keyword">weak</span>   obj1 = <span class="literal">nil</span>;</span><br><span class="line"><span class="keyword">id</span>  _ autorelease    obj2 = <span class="literal">nil</span>;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> 小结strong：对于之前在MRC中声明的内存管理原则中的“自己生成的对象自己持有”和“非自己生成的对象，自己也能持有”，通过 _ _strong修饰符均可实现，通过废弃 _ _strong修饰符的变量(变量作用域结束)或者对变量赋值，都可以实现，对于最后一项：“不再需要时，主动释放”，很明显，release就不需要了，作用域结束时强引用失效，默认实现了这一功能。</p>
+</blockquote>
+<ul>
+<li>__weak</li>
+</ul>
+<blockquote>
+<p>使用<strong>weak的环境大伙儿都知道，是为了避免循环引用，所以理解起来较为简单，此处仅简单总结</strong>weak的作用即可</p>
+</blockquote>
+<p><strong>作用1：<strong>weak 与 </strong>strong修饰符相反，提供弱引用，弱引用不持有对象，也就是说弱引用不能使对象的引用计数+1.</strong><br><strong>作用2：<strong>weak修饰符还有另一个优点，在持有某对象的弱引用，若该对象被废弃，则此弱引用将自动失效且处于nil被赋值的状态(空弱引用)，主要和后面的</strong>unself_unretained做对比</strong>，如下代码所示：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span> _ _<span class="keyword">weak</span> obj1 = <span class="literal">nil</span>;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">id</span> _ _<span class="keyword">strong</span> obj0 = [[<span class="built_in">NSObject</span> alloc]init];</span><br><span class="line">    obj1 = obj0;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"A:%@"</span>,obj1);</span><br><span class="line">&#125;  </span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"B:%@"</span>,obj1);</span><br><span class="line"></span><br><span class="line"><span class="comment">//打印结果如下：</span></span><br><span class="line">A:&lt;<span class="built_in">NSObject</span>&gt;: <span class="number">0x753e180</span> </span><br><span class="line">B:(null)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>weak 小结：</strong>weak 修饰符只能用于 iOS5 以上，及OSX Lion以上版本的应用程序，在iOS4以及OS X Snow Leopard 的应用程序中，可以使用__unsafe_unretained修饰符代替(难道是它出现的原因？)</p>
+</blockquote>
+<ul>
+<li>_unsafe_unretained</li>
+</ul>
+<blockquote>
+<p>_unsafe_unretained修饰符正如其名unsafe所示，是不安全的修饰符，尽管ARC式的内存管理是编译器的工作，但附有_unsafe_unretained修饰符的变量不属于编译器的内存管理对象。这一点使用时要注意。</p>
+</blockquote>
+<p>前文提到_unsafe_unretained与_ _weak功能相似，但是还是有差别，下面介绍：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span> _ _<span class="keyword">weak</span> obj1 = <span class="literal">nil</span>;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">id</span> _ _<span class="keyword">strong</span> obj0 = [[<span class="built_in">NSObject</span> alloc]init];</span><br><span class="line">    obj1 = obj0;</span><br><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"A:%@"</span>,obj1);</span><br><span class="line">&#125;  </span><br><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"B:%@"</span>,obj1);</span><br><span class="line"><span class="comment">//打印结果如下：</span></span><br><span class="line">A:&lt;<span class="built_in">NSObject</span>&gt;: <span class="number">0x753e180</span> </span><br><span class="line"></span><br><span class="line">B:&lt;<span class="built_in">NSObject</span>&gt;: <span class="number">0x753e180</span></span><br></pre></td></tr></table></figure>
+<p>解释：因为obj0变量超出其作用域，强引用失效，所以自动释放自己持有的对象，所以整个对象无持有着，引用计数为0，所以废弃。但很显_unsafe_unretained修饰的obj1在其指向的对象被废弃了之后，依然指向其地址，所以这就是问题（书上说这叫悬垂指针，估计就是咱们理解的<strong>野指针</strong>吧。）</p>
+<blockquote>
+<p>_unsafe_unretained小结：在iOS4以及OS X Snow Leopard 的应用程序中，务须使用<strong>unsafe_unretained修饰符代替</strong>weak,所以在使用_unsafe_unretained的时候，虽然其指向地址有值，但一定要确保其是否真实存在</p>
+</blockquote>
+<ul>
+<li>__autoreleasing</li>
+</ul>
+<blockquote>
+<p>ARC有效时，实际上之前使用的autorelease方法是不能使用的，另外也不能使用NSAutoreleasePool类。虽然在在ARC有效时，autorelease不能使用，但其功能是可以通过其他方式来实现的，就如现在的__autoreleasing。</p>
+</blockquote>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ARC无效时</span></span><br><span class="line"><span class="built_in">NSAutoreleasePool</span> *pool = [[<span class="built_in">NSAutoreleasePool</span> alloc] init];</span><br><span class="line"><span class="keyword">id</span> obj = [[<span class="built_in">NSObject</span> alloc]init];</span><br><span class="line">[obj autorelease];</span><br><span class="line">[pool drain];</span><br><span class="line"><span class="comment">//ARC有效时，上述源代码就可以写成如下了：</span></span><br><span class="line">@autoreleasePool &#123;</span><br><span class="line"><span class="keyword">id</span> _ _autoreleasing obj = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是说，在ARC有效时，用@autoreleasepool块替代NSAutoreleasePool类，用附有_ _autoreleasing 修饰符替代autorelease方法</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/183487-c5df6989fbd56196.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="对应图.png"><br>但是显式的添加<strong>autorelease修饰符同显式地附加</strong>strong一样罕见</p>
+<p><strong>1.前面提到过，通过调用alloc/new/copy/mutablecopy以外的方法取得对象，对象会被自动添加到autoreleasePool当中，即使不在变量后添加_ _autoreleasing修饰符</strong><br><strong>2.对象作为函数的返回值，编译器会将其自动添加到autoreleasePool(这一条不是很确定)</strong>下面简单举例：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">+ (<span class="keyword">id</span>)array&#123;</span><br><span class="line"><span class="keyword">id</span> obj = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line"><span class="keyword">return</span> obj;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为没有显式添加所有权修饰符，所以obj其实是默认添加了<strong> strong 的。由于return使得对象超出其作用域，所以该强引用对应的自己持有的对象会被自动释放，但该对象作为返回值，编译器会自动的将其添加到autoreleasePool.<br>**3.虽然</strong>weak修饰符是为了避免循环引用的，但其实访问附有<strong>weak修饰符的变量时，实际上必定要访问到注册到autoreleasePool的对象。**<br>因为</strong>weak修饰符只支持对象的弱引用，而在访问引用对象的过程中，该对象可能随时被废弃，如果把要访问的对象注册到autoreleasePool中,那么在@autoreleasepool块结束之前<strong>都能确保该对象的存在，而不被释放</strong>。</p>
+<h4 id="2-ARC规则"><a href="#2-ARC规则" class="headerlink" title="2.ARC规则"></a>2.ARC规则</h4><ul>
+<li>不能使用retain/release/retain/retainCount/autorelease</li>
+<li>不能使用NSAllocateObject、NSDealloccateObject</li>
+<li>须遵守内存管理的方法命名规则</li>
+<li>不要显式调用dealloc</li>
+<li>使用@autoreleasepool 块替代NSAutorePool</li>
+<li>不能使用区域NSZone</li>
+<li>对象型变量不能作为C语言结构体(struct/union)的成员</li>
+<li>显式转换” id “和” void * “</li>
+</ul>
+<p>下面简单介绍部分规则：<br>1.<strong>须遵守内存管理的方法命名规则：在ARC有效时，用于对象生成/持有方法必须遵守以下的命名规则</strong></p>
+<ul>
+<li>alloc</li>
+<li>new</li>
+<li>copy</li>
+<li>mutableCopy</li>
+</ul>
+<p>以上述名称开始的方法在返回对象时，必须返回给调用方所应当持有的对象。<br>2.<strong>对象型变量不能作为C语言结构体(struct/union)的成员</strong></p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> Data &#123;</span><br><span class="line"> <span class="built_in">NSMutableArray</span> *array;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上这种方式，编译就会报错。虽然是LLVM3.0，但是无论怎样，C语言的规约上还是没有方法来管理结构体成员的生命周期。因为ARC把内存管理的工作分配给编译器，所以编译器必须能够知道并管理对象的生命周期，但是对于C语言结构体来说，这在标准上是不可实现的。<br>要把对象类型的变量加入到结构体成员中时，可强制转换为void *,或是附加前面所述的__unsafe_unretained修饰符即可。</p>
+<h4 id="3-ARC中的属性"><a href="#3-ARC中的属性" class="headerlink" title="3.ARC中的属性"></a>3.ARC中的属性</h4><ul>
+<li>属性种类：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">属性声明种类</th>
+<th style="text-align:center">所有权修饰符</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">assign</td>
+<td style="text-align:center">__unsafe_unretained</td>
+</tr>
+<tr>
+<td style="text-align:center">copy</td>
+<td style="text-align:center">__strong修饰符(但是赋值的是被复制的对象)</td>
+</tr>
+<tr>
+<td style="text-align:center">retain</td>
+<td style="text-align:center">__strong修饰符</td>
+</tr>
+<tr>
+<td style="text-align:center">strong</td>
+<td style="text-align:center">__strong修饰符</td>
+</tr>
+<tr>
+<td style="text-align:center">unsafe_unretained</td>
+<td style="text-align:center">__unsafe_unretained修饰符</td>
+</tr>
+<tr>
+<td style="text-align:center">weak</td>
+<td style="text-align:center">__weak修饰符</td>
+</tr>
+</tbody>
+</table>
+<p>  以上各种属性赋值给指定的属性中就相当于赋值给附加各属性对应的所有权修饰符的变量。只有copy属性不是简单的赋值，他赋值是通过NSCoping接口的copyWithZone方法复制赋值源所生成的对象。<br>   <strong>unsafe_unretained修饰符以外的</strong>strong/<strong>weak/</strong>autorealease修饰符保证其指定的变量初始化为nil。同样的，附有<strong>strong/</strong>weak/__autorealease修饰符变量的数组也可以保证其初始化为nil</p>
+<h4 id="4-ARC的实现-strong"><a href="#4-ARC的实现-strong" class="headerlink" title="4.ARC的实现(__strong)"></a>4.ARC的实现(__strong)</h4><blockquote>
+<p> 苹果官方说明中称，ARC是“由编译器进行内存管理”的，但实际上只有编译器是无法完全胜任的，在此基础上还需要Objective-C运行时的协助，也就是说，ARC由以下工具库来实现(iOS5之后)</p>
+<ul>
+<li>clang(LLVM编译器)3.0及以上</li>
+<li>obj4 Objective-C运行时库493.9以上</li>
+</ul>
+</blockquote>
+<p>围绕着clang汇编输出和objc4库(主要是runtime/objc-arr.mm)的源代码进行说明</p>
+<ul>
+<li><strong><strong>strong修饰符(研究赋值给附有</strong>strong修饰符的变量在实际的程序中到底是怎么运行的)</strong></li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> <span class="keyword">id</span> _ _<span class="keyword">strong</span> obj = [[<span class="built_in">NSObject</span> alloc] init];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在编译器选项“-S”的同时运行clang，可取得程序汇编输出，看看汇编输出和obj4库的源代码就能知道程序是如何工作的。该源代码实际上可以转化为调用以下的函数，为了方便理解，都将使用模拟源代码。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//编译器模拟的代码</span></span><br><span class="line"><span class="keyword">id</span> obj = objc_msgSend(<span class="built_in">NSObject</span>,<span class="keyword">@selector</span>(alloc));</span><br><span class="line">objc_msgSend(obj,<span class="keyword">@selector</span>(init));</span><br><span class="line">objc_release(obj);</span><br></pre></td></tr></table></figure>
+<p>如源代码所示，2次调用objc_msgSend方法(alloc和init方法)，变量作用域结束时，通过objc_release释放对象。虽然ARC有效时不能使用release方法，但由此推测编译器<strong>编译时自动插入了release</strong></p>
+<p>参考文献：</p>
+<ul>
+<li>《Pro multithreading and memory management for iOS and OS X》</li>
+</ul>
+
+  </section>
+
+</article>
+
+<section class="read-more">
+           
+    
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">最近的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2016/06/10/iOS之Block深度解析/" title="iOS之Block深度解析">iOS之Block深度解析</a></h2>
+                <p class="excerpt">
+                
+                Block基础回顾1.什么是Block？
+带有局部变量的匿名函数(名字不重要，知道怎么用就行)，差不多就与C语言中的函数指针类似，可以当做参数传来传去，而且可以没有名字。
+
+2.Block语法完整的形式的 Block 语法如下,格式一并且与一般的 C 语言函数定义相比，仅有两点不同：
+
+没有函数名
+
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2016-06-10T01:42:47.000Z" class="post-list__meta--date date">2016-06-10</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;</span><a class="btn-border-small" href="/2016/06/10/iOS之Block深度解析/">继续阅读</a></div>
+                           
+            </div>
+        
+        
+               
+            <div class="read-more-item">
+                <span class="read-more-item-dim">更早的文章</span>
+                <h2 class="post-list__post-title post-title"><a href="/2016/05/04/Linux下的Socket编程/" title="Linux下的Socket编程">Linux下的Socket编程</a></h2>
+                <p class="excerpt">
+                
+                Linux下的Socket编程(主要包括TCP部分)本文是Linux下基本的Socket编程进行介绍，主要包括以下知识点 
+
+Linux下的一些小知识(编译常识，文件相关操作基础，进程与线程)
+TCP网络编程基础(TCP Socket) 
+基于UDP协议的接受和发送(UDP Socket),以及网络
+                &hellip;
+                </p>
+                <div class="post-list__meta"><time datetime="2016-05-04T13:23:26.000Z" class="post-list__meta--date date">2016-05-04</time> &#8226; <span class="post-list__meta--tags tags">于&nbsp;</span><a class="btn-border-small" href="/2016/05/04/Linux下的Socket编程/">继续阅读</a></div>
+                       
+            </div>
+        
+     
+   
+   
+  
+</section>
+
+  
+
+            <footer class="footer">
+    <span class="footer__copyright">
+        本站点采用 <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    </span>
+    <span class="footer__copyright">
+        基于 <a href="http://hexo.io">Hexo</a> 搭建，感谢 <a href="https://pages.github.com/">GitHub Pages</a> 提供免费的托管服务
+    </span>
+    <span class="footer__copyright">
+        &copy; 2018 - 本站使用 <a href="https://github.com/monniya/hexo-theme-new-vno ">new-vno</a> 主题,
+        由<a href="https://monniya.com ">@Monniya</a> 修改自 <a href="https://github.com/lenbo-ma/hexo-theme-vno" target="_blank">Vno</a>, 原创出自<a href="http://github.com/onevcat/vno" target="_blank">onevcat</a>
+    </span>
+    
+</footer>
+
+
+        </div>
+    </div>
+
+     
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-78918255-1', 'auto');
+	ga('send', 'pageview');
+</script>
+
+    
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?9cdad07c755fa23f6aced510c6760e87";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+
+    <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    
+</body>
+</html>
